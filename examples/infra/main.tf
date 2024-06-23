@@ -1,5 +1,5 @@
 module "iam_role_with_policies" {
-  source               = "../../"
+  source               = "github.com/DanHenrique/terraform-aws-lambda?ref=v0.0.1"
 
   # Lambda configuration
   function_name            = "python-example_function"
