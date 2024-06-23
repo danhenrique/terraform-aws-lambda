@@ -2,9 +2,10 @@
 
 All notable changes to this project will be documented in this file.
 
-## [Unreleased]
+## v0.0.1
 
 ### Added
+
 - Added resource for creating AWS Lambda function.
 - Added resource for creating CloudWatch log group.
 - Added variable to set Lambda function name.
