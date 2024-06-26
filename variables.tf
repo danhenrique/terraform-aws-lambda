@@ -1,6 +1,37 @@
-# Lambda
+# Lambda variables
+variable "function_architectures" {
+  description = "Supported architectures for the Lambda function"
+  type        = list(string)
+  default     = ["x86_64"]
+  validation {
+    condition     = contains(["x86_64", "arm64"], var.function_runtime)
+    error_message = "The function architecture must be one of the specified values: x86_64, arm64."
+  }
+}
+
+variable "function_runtime" {
+  description = "Runtime da função Lambda (ex: nodejs14.x)"
+  type        = string
+}
+
+variable "function_code" {
+  description = "Path to the Lambda function code"
+  type        = string
+}
+
+variable "function_package_type" {
+  description = "The package type for the Lambda function"
+  type        = string
+  default     = "Zip"
+}
+
 variable "function_name" {
   description = "Nome da função Lambda"
+  type        = string
+}
+
+variable "function_description" {
+  description = "Lambda function description"
   type        = string
 }
 
@@ -9,9 +40,28 @@ variable "function_handler" {
   type        = string
 }
 
-variable "function_runtime" {
-  description = "Runtime da função Lambda (ex: nodejs14.x)"
-  type        = string
+variable "function_layers" {
+  description = "The list of Lambda Layer Version ARNs (maximum of 5) to attach to the Lambda function"
+  type        = list(string)
+  default     = []
+
+}
+
+variable "function_memory" {
+  description = "The amount of memory in MB allocated to the Lambda function"
+  type        = number
+}
+
+variable "function_timeout" {
+  description = "The amount of time in seconds that Lambda allows a function to run before stopping it"
+  type        = number
+  default     = 10
+}
+
+variable "function_concurrent_executions" {
+  description = "The amount of reserved concurrent executions for this Lambda function"
+  type        = number
+  default     = -1
 }
 
 variable "function_role" {
@@ -19,9 +69,27 @@ variable "function_role" {
   type        = string
 }
 
-variable "lambda_code_path" {
-  description = "Caminho para o diretório do código do Lambda"
+variable "kms_key_arn" {
+  description = "The ARN of the KMS key used to encrypt environment variables"
   type        = string
+  default     = null
+}
+
+variable "publish_function" {
+  description = "Whether to publish the Lambda function"
+  type        = bool
+  default     = false
+}
+
+variable "function_alias" {
+  description = "The alias name for the function."
+  type        = string
+  default     = null
+
+  validation {
+    condition     = var.publish_function == false || (var.publish_function == true && length(var.function_alias) > 0)
+    error_message = "The function_alias must be provided when publish_function is true."
+  }
 }
 
 variable "environment_variables" {
@@ -30,23 +98,11 @@ variable "environment_variables" {
   default     = {}
 }
 
-/* variable "subnet_ids" {
-  description = "IDs das sub-redes para configurar a função Lambda dentro de uma VPC"
-  type        = list(string)
-  default     = []
-}
-
-variable "security_group_ids" {
-  description = "IDs dos grupos de segurança para configurar a função Lambda dentro de uma VPC"
-  type        = list(string)
-  default     = []
-} */
-
-# CloudWatch
+# CloudWatch configuration
 variable "log_retention_days" {
   description = "Número de dias para retenção de logs no CloudWatch"
   type        = number
-  default     = 7
+  default     = 1
 }
 
 # Both

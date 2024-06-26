@@ -1,10 +1,23 @@
-resource "aws_lambda_function" "lambda_function" {
-  function_name    = var.function_name
-  handler          = var.function_handler
+resource "aws_lambda_function" "default" {
+  architectures    = var.function_architectures
   runtime          = var.function_runtime
+  filename         = var.function_code
+  source_code_hash = filebase64sha256(var.function_code)
+  package_type = var.function_package_type
+
+  function_name    = var.function_name
+  description      = var.function_description
+  handler          = var.function_handler
+  layers = var.function_layers
+
+  memory_size = var.function_memory
+  timeout = var.function_timeout
+  reserved_concurrent_executions = var.function_concurrent_executions
+
   role             = var.function_role
-  filename         = data.archive_file.lambda_zip.output_path
-  #source_code_hash = filebase64sha256(data.archive_file.lambda_zip.output_path)
+  kms_key_arn = var.kms_key_arn
+
+  publish = var.publish_function
 
   environment {
     variables = var.environment_variables
@@ -22,13 +35,15 @@ resource "aws_lambda_function" "lambda_function" {
   }
 }
 
-resource "aws_cloudwatch_log_group" "lambda_log_group" {
-  name              = "/aws/lambda/${var.function_name}"
-  retention_in_days = var.log_retention_days
+resource "aws_lambda_alias" "default" {
+  count = var.publish_function ? 1 : 0
+
+  name             = var.function_alias
+  function_name    = aws_lambda_function.default.function_name
+  function_version = aws_lambda_function.default.version
 }
 
-data "archive_file" "lambda_zip" {
-  type        = "zip"
-  source_dir  = "${path.root}/${var.lambda_code_path}"
-  output_path = "${path.root}/lambda_function_payload.zip"
+resource "aws_cloudwatch_log_group" "default" {
+  name              = "/aws/lambda/${aws_lambda_function.default.function_name}"
+  retention_in_days = var.log_retention_days
 }
