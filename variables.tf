@@ -10,8 +10,9 @@ variable "function_architectures" {
 }
 
 variable "function_runtime" {
-  description = "Runtime da função Lambda (ex: nodejs14.x)"
+  description = "The runtime environment for the Lambda function"
   type        = string
+
 }
 
 variable "function_code" {
@@ -26,7 +27,7 @@ variable "function_package_type" {
 }
 
 variable "function_name" {
-  description = "Nome da função Lambda"
+  description = "Lambda function name"
   type        = string
 }
 
@@ -36,7 +37,7 @@ variable "function_description" {
 }
 
 variable "function_handler" {
-  description = "Handler da função Lambda"
+  description = "The entry point for the Lambda function"
   type        = string
 }
 
@@ -93,14 +94,14 @@ variable "function_alias" {
 }
 
 variable "environment_variables" {
-  description = "Variáveis de ambiente para a função Lambda"
+  description = "Environment variables to set for the Lambda function"
   type        = map(string)
   default     = {}
 }
 
 # CloudWatch configuration
 variable "log_retention_days" {
-  description = "Número de dias para retenção de logs no CloudWatch"
+  description = "The number of days to retain log events for the Lambda function"
   type        = number
   default     = 1
 }
