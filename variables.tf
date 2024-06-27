@@ -4,8 +4,8 @@ variable "function_architectures" {
   type        = list(string)
   default     = ["x86_64"]
   validation {
-    condition     = contains(["x86_64", "arm64"], var.function_runtime)
-    error_message = "The function architecture must be one of the specified values: x86_64, arm64."
+    condition     = alltrue([for arch in var.function_architectures : contains(["x86_64", "arm64"], arch)])
+    error_message = "Each architecture must be 'x86_64' or 'arm64'."
   }
 }
 
@@ -51,6 +51,7 @@ variable "function_layers" {
 variable "function_memory" {
   description = "The amount of memory in MB allocated to the Lambda function"
   type        = number
+  default     = 128
 }
 
 variable "function_timeout" {
@@ -86,11 +87,6 @@ variable "function_alias" {
   description = "The alias name for the function."
   type        = string
   default     = null
-
-  validation {
-    condition     = var.publish_function == false || (var.publish_function == true && length(var.function_alias) > 0)
-    error_message = "The function_alias must be provided when publish_function is true."
-  }
 }
 
 variable "environment_variables" {
