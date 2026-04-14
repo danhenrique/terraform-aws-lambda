@@ -1,74 +1,67 @@
-# Lambda variables
-variable "function_architectures" {
-  description = "Supported architectures for the Lambda function"
-  type        = list(string)
-  default     = ["x86_64"]
-  validation {
-    condition     = alltrue([for arch in var.function_architectures : contains(["x86_64", "arm64"], arch)])
-    error_message = "Each architecture must be 'x86_64' or 'arm64'."
-  }
+# mandatory variables
+
+variable "name" {
+  description = "The name of the lambda function"
+  type        = string
 }
 
-variable "function_runtime" {
+variable "description" {
+  description = "Description of what the function does"
+  type        = string
+}
+
+variable "handler" {
+  description = "The function entrypoint in your code"
+  type        = string
+}
+
+variable "runtime" {
   description = "The runtime environment for the Lambda function"
   type        = string
-
 }
 
-variable "function_code" {
-  description = "Path to the Lambda function code"
+variable "role" {
+  description = "ARN da função IAM associada à função Lambda"
   type        = string
 }
 
-variable "function_package_type" {
-  description = "The package type for the Lambda function"
-  type        = string
-  default     = "Zip"
-}
-
-variable "function_name" {
-  description = "Lambda function name"
+variable "source_path" {
+  description = "The absolute path to the source code directory"
   type        = string
 }
 
-variable "function_description" {
-  description = "Lambda function description"
-  type        = string
+# CloudWatch configuration
+
+variable "log_retention_days" {
+  description = "The number of days to retain log events for the Lambda function"
+  type        = number
+  default     = 1
 }
 
-variable "function_handler" {
-  description = "The entry point for the Lambda function"
-  type        = string
-}
+# optional variables
 
-variable "function_layers" {
-  description = "The list of Lambda Layer Version ARNs (maximum of 5) to attach to the Lambda function"
-  type        = list(string)
-  default     = []
-
-}
-
-variable "function_memory" {
+variable "memory" {
   description = "The amount of memory in MB allocated to the Lambda function"
   type        = number
   default     = 128
 }
 
-variable "function_timeout" {
+variable "timeout" {
   description = "The amount of time in seconds that Lambda allows a function to run before stopping it"
   type        = number
-  default     = 10
+  default     = 5
 }
 
-variable "function_concurrent_executions" {
+variable "concurrent_executions" {
   description = "The amount of reserved concurrent executions for this Lambda function"
   type        = number
   default     = -1
 }
 
-variable "function_role" {
-  description = "ARN da função IAM associada à função Lambda"
-  type        = string
+variable "layers" {
+  description = "The list of Lambda Layer Version ARNs (maximum of 5) to attach to the Lambda function"
+  type        = list(string)
+  default     = []
 }
 
 variable "kms_key_arn" {
@@ -83,10 +76,14 @@ variable "publish_function" {
   default     = false
 }
 
-variable "function_alias" {
-  description = "The alias name for the function."
+variable "alias" {
+  description = "The alias name for the function. Required when publish_function is true."
   type        = string
   default     = null
+  validation {
+    condition     = !var.publish_function || var.alias != null
+    error_message = "The 'alias' variable is required when 'publish_function' is true."
+  }
 }
 
 variable "environment_variables" {
@@ -95,14 +92,7 @@ variable "environment_variables" {
   default     = {}
 }
 
-# CloudWatch configuration
-variable "log_retention_days" {
-  description = "The number of days to retain log events for the Lambda function"
-  type        = number
-  default     = 1
-}
-
-# Both
+# tags
 variable "tags" {
   description = "Tags to apply to the resources"
   type        = map(string)
