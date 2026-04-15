@@ -36,7 +36,7 @@ module "basic_lambda" {
 
   # tags
   tags = {
-    git_repository = "owner/repository" # TODO: replace with your repository
+    Repository = "owner/repository" # TODO: replace with your repository
     environment    = "dev"              # TODO: replace with your environment
   }
 }
