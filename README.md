@@ -37,7 +37,7 @@ module "lambda" {
   # Required tags
   tags = {
     environment    = "development"
-    git_repository = "https://github.com/your-org/your-repo"
+    Repository = "https://github.com/your-org/your-repo"
   }
 }
 ```
@@ -83,7 +83,7 @@ module "lambda" {
     environment    = "production"
     team          = "backend"
     cost_center   = "engineering"
-    git_repository = "https://github.com/your-org/your-repo"
+    Repository = "https://github.com/your-org/your-repo"
   }
 }
 ```
@@ -122,7 +122,7 @@ module "lambda" {
 | function_alias | The alias name for the function | `string` | `null` | no |
 | environment_variables | Environment variables to set for the Lambda function | `map(string)` | `{}` | no |
 | log_retention_days | The number of days to retain log events for the Lambda function | `number` | `1` | no |
-| tags | Tags to apply to the resources (git_repository tag is mandatory) | `map(string)` | `{}` | no |
+| tags | Tags to apply to the resources (Repository tag is mandatory) | `map(string)` | `{}` | no |
 
 ## Outputs
 
@@ -139,7 +139,7 @@ See the [examples](examples/) directory for complete usage examples:
 ## Notes
 
 - The module automatically configures VPC settings using the default VPC and its associated subnets and security groups
-- The `git_repository` tag is mandatory and will cause validation errors if not provided
+- The `Repository` tag is mandatory and will cause validation errors if not provided
 - Lambda aliases are only created when `publish_function` is set to `true`
 - CloudWatch logs are automatically created with the naming convention `/aws/lambda/{function_name}`
 
